@@ -1,0 +1,184 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/Wessie/appdirs",
+			"repository": "https://github.com/Wessie/appdirs",
+			"vcs": "git",
+			"revision": "6573e894f8e294cbae0c4e45c25ff9f2e2918a4e",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/boombuler/barcode",
+			"repository": "https://github.com/boombuler/barcode",
+			"vcs": "git",
+			"revision": "8b1271e880cb66f992a2647ff7940d4dc5a41fee",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/flopp/go-coordsparser",
+			"repository": "https://github.com/flopp/go-coordsparser",
+			"vcs": "git",
+			"revision": "845bca739e263e1cd38de25024a47b4d6acbfc1f",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/flopp/go-staticmaps",
+			"repository": "https://github.com/flopp/go-staticmaps",
+			"vcs": "git",
+			"revision": "3f8ad51184e22ab5360dc024418a73335c9c36b3",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/fogleman/gg",
+			"repository": "https://github.com/fogleman/gg",
+			"vcs": "git",
+			"revision": "b28a9453d48f7f1cf2056cc87771610cac326b78",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/gocarina/gocsv",
+			"repository": "https://github.com/gocarina/gocsv",
+			"vcs": "git",
+			"revision": "5c45a4ed49f421f9503534b5636775f07168a124",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/freetype/raster",
+			"repository": "https://github.com/golang/freetype",
+			"vcs": "git",
+			"revision": "38b4c392adc5eed94207994c4848fff99f4ac234",
+			"branch": "master",
+			"path": "/raster",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/freetype/truetype",
+			"repository": "https://github.com/golang/freetype",
+			"vcs": "git",
+			"revision": "38b4c392adc5eed94207994c4848fff99f4ac234",
+			"branch": "master",
+			"path": "truetype",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/geo/r1",
+			"repository": "https://github.com/golang/geo",
+			"vcs": "git",
+			"revision": "0c31b84d978c2b31eab2ba8c6c6e820d8ce3acff",
+			"branch": "master",
+			"path": "r1",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/geo/r2",
+			"repository": "https://github.com/golang/geo",
+			"vcs": "git",
+			"revision": "0c31b84d978c2b31eab2ba8c6c6e820d8ce3acff",
+			"branch": "master",
+			"path": "r2",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/geo/r3",
+			"repository": "https://github.com/golang/geo",
+			"vcs": "git",
+			"revision": "0c31b84d978c2b31eab2ba8c6c6e820d8ce3acff",
+			"branch": "master",
+			"path": "r3",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/geo/s1",
+			"repository": "https://github.com/golang/geo",
+			"vcs": "git",
+			"revision": "0c31b84d978c2b31eab2ba8c6c6e820d8ce3acff",
+			"branch": "master",
+			"path": "s1",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/golang/geo/s2",
+			"repository": "https://github.com/golang/geo",
+			"vcs": "git",
+			"revision": "0c31b84d978c2b31eab2ba8c6c6e820d8ce3acff",
+			"branch": "master",
+			"path": "/s2",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/jessevdk/go-flags",
+			"repository": "https://github.com/jessevdk/go-flags",
+			"vcs": "git",
+			"revision": "8bc97d602c3bfeb5fc6fc9b5a9c898f245495637",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/jung-kurt/gofpdf",
+			"repository": "https://github.com/jung-kurt/gofpdf",
+			"vcs": "git",
+			"revision": "c81d351d55fabc44d050fb13ad7741a592f8b818",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/ruudk/golang-pdf417",
+			"repository": "https://github.com/ruudk/golang-pdf417",
+			"vcs": "git",
+			"revision": "60b9437b150c3acd721fd7af34e6413de4021563",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skip2/go-qrcode",
+			"repository": "https://github.com/skip2/go-qrcode",
+			"vcs": "git",
+			"revision": "5bfceac8c4950ff8f735525ddcde5a6b08d77ab6",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/tkrajina/gpxgo/gpx",
+			"repository": "https://github.com/tkrajina/gpxgo",
+			"vcs": "git",
+			"revision": "7848cf26f5a58b4a4e23b89a4b67cfc3d52dd042",
+			"branch": "master",
+			"path": "/gpx",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/image/font",
+			"repository": "https://go.googlesource.com/image",
+			"vcs": "git",
+			"revision": "d2f07f8aaaa906f1a64eee0e327fc681cdb2944f",
+			"branch": "master",
+			"path": "font",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/image/math/fixed",
+			"repository": "https://go.googlesource.com/image",
+			"vcs": "git",
+			"revision": "d2f07f8aaaa906f1a64eee0e327fc681cdb2944f",
+			"branch": "master",
+			"path": "/math/fixed",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/image/tiff",
+			"repository": "https://go.googlesource.com/image",
+			"vcs": "git",
+			"revision": "d2f07f8aaaa906f1a64eee0e327fc681cdb2944f",
+			"branch": "master",
+			"path": "/tiff",
+			"notests": true
+		}
+	]
+}
