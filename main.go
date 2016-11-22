@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gocarina/gocsv"
 	"github.com/jung-kurt/gofpdf"
 	"log"
@@ -20,6 +21,7 @@ var c struct {
 	cache string
 	cDate time.Time
 	debug bool
+	force bool
 }
 
 func main() {
@@ -27,6 +29,7 @@ func main() {
 	flag.StringVar(&c.out, "out", "", "Output PDF file")
 	flag.StringVar(&c.cache, "cache", "cache", "Cache path")
 	flag.BoolVar(&c.debug, "debug", false, "Debug output")
+	flag.BoolVar(&c.force, "force", false, "No cache usage")
 	// flag.StringVar(&c.outPrefix, "outPrefix", "", "Output file prefix")
 
 	flag.Parse()
@@ -79,7 +82,9 @@ func main() {
 	// Generate the PDF
 	for i := range locations {
 		loc := locations[i]
-		log.Printf("Processing map number %s %s", loc.Number, loc.Name)
+		if !c.debug {
+			log.Printf("Processing map number %s %s", loc.Number, loc.Name)
+		}
 		pdf.AddPage()
 
 		imageOpts := gofpdf.ImageOptions{"PNG", true}
@@ -92,18 +97,29 @@ func main() {
 		smPath := loc.getMap()
 		// mapInfo := pdf.RegisterImageOptions(smPath, imageOpts)
 
-		// Name
-		if loc.Name != "" {
-			pdf.TransformBegin()
-			pdf.TransformRotate(90, 5, pHeight-5)
-			pdf.SetFontSize(40)
-			pdf.Text(5, pHeight+5, loc.Number)
-			pdf.SetFontSize(20)
-			pdf.Text(5, pHeight+5+7, tr(loc.Name))
-			pdf.ImageOptions(qrPath, pHeight-27, pHeight-10, 0, 0, false, imageOpts, 0, "")
-			pdf.TransformEnd()
-		}
+		pdf.TransformBegin()
+		pdf.TransformRotate(90, 5, pHeight-5)
+		pdf.SetFontSize(40)
+		pdf.SetTextColor(0, 0, 0)
 
+		// Number
+		pdf.Text(5, pHeight+5, loc.Number)
+		numW := pdf.GetStringWidth(loc.Number)
+
+		// Name
+		pdf.SetFontSize(20)
+		pdf.Text(5+numW+4, pHeight+5, tr(loc.Name))
+
+		// Coords
+		pdf.SetFontSize(15)
+		pdf.SetTextColor(150, 150, 150)
+		coords := fmt.Sprintf("%f N, %f E", loc.Latitude, loc.Longitude)
+		pdf.Text(5, pHeight+5+7, coords)
+
+		pdf.ImageOptions(qrPath, pHeight-27, pHeight-11, 0, 0, false, imageOpts, 0, "")
+		pdf.TransformEnd()
+
+		// Add this last to clip QR code
 		pdf.ImageOptions(smPath, 25, 5, 0, pHeight-10, false, imageOpts, 0, "")
 		if c.debug {
 			log.Printf("Added map %s", smPath)

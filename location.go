@@ -22,23 +22,25 @@ type Location struct {
 }
 
 func (l *Location) getQRCode() string {
-	log.Printf("Getting QR code for %s", l.Number)
 	path := filepath.Join(c.cache, fmt.Sprintf("%s-qrc.png", l.Number))
 	old := true
 	fi, err := os.Stat(path)
 	if err == nil && fi.ModTime().After(c.cDate) {
 		old = false
 		if c.debug {
-			log.Printf("Using existing map file %s", path)
+			log.Printf("Using existing QR code %s", path)
 		}
 	}
-	if old {
-		url := fmt.Sprintf("geo://%s,%s", l.Latitude, l.Longitude)
-		qrcode, err := qrcode.New(url, qrcode.Medium)
+	if old || c.force {
+		if c.debug {
+			log.Printf("Creating new QR code %s", path)
+		}
+		url := fmt.Sprintf("geo:%f,%f", l.Latitude, l.Longitude)
+		qrcode, err := qrcode.New(url, qrcode.High)
 		if err != nil {
 			log.Fatal("Failed to create QR code: %s", err)
 		}
-		err = qrcode.WriteFile(100, path)
+		err = qrcode.WriteFile(110, path)
 		if err != nil {
 			log.Fatal("Failed to write QR code: %s", err)
 		}
@@ -47,7 +49,6 @@ func (l *Location) getQRCode() string {
 }
 
 func (l *Location) getMap() string {
-	log.Printf("Getting map for %s", l.Number)
 	// Flag
 	old := true
 	path := filepath.Join(c.cache, fmt.Sprintf("%s-map.png", l.Number))
@@ -64,17 +65,17 @@ func (l *Location) getMap() string {
 			log.Printf("Creating new map file %s", path)
 		}
 		ctx := sm.NewContext()
-		ctx.SetSize(640, 513)
-		// ctx.SetSize(1280, 1026)
+		// ctx.SetSize(640, 513)
+		ctx.SetSize(960, 770)
 		pos := s2.LatLngFromDegrees(l.Latitude, l.Longitude)
 		kh := s2.LatLngFromDegrees(19.89830, 99.81805)
-		ctx.AddMarker(sm.NewMarker(pos, color.RGBA{0xff, 0, 0, 0xff}, 16.0))
-		ctx.AddMarker(sm.NewMarker(kh, color.RGBA{0, 0, 0xff, 0xff}, 16.0))
+		ctx.AddMarker(sm.NewMarker(pos, color.RGBA{0xff, 0, 0, 0xff}, 32.0))
+		ctx.AddMarker(sm.NewMarker(kh, color.RGBA{0, 0, 0xff, 0xff}, 32.0))
 		// ctx.SetCenter(s2.LatLngFromDegrees(19.89830, 99.81805))
 		// ctx.SetCenter(pos)
 		// ctx.SetTileProvider(sm.NewTileProviderOpenTopoMap())
-		ctx.SetTileProvider(sm.NewTileProviderThunderforestOutdoors())
-		// ctx.SetTileProvider(sm.NewTileProviderThunderforestLandscape())
+		// ctx.SetTileProvider(sm.NewTileProviderThunderforestOutdoors())
+		ctx.SetTileProvider(sm.NewTileProviderThunderforestLandscape())
 
 		if c.debug {
 			log.Printf("Rendering map for %s", l.Number)
