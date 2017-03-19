@@ -1,0 +1,103 @@
+{
+    "memo": "af98d7ca4344c24eb2807f0079d410477ed2c9e866d90cc7ec4f000aa1455409",
+    "projects": [
+        {
+            "name": "github.com/Wessie/appdirs",
+            "branch": "master",
+            "revision": "6573e894f8e294cbae0c4e45c25ff9f2e2918a4e",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/felix/go-staticmaps",
+            "branch": "master",
+            "revision": "f992a78f1c6956ab3c0241364b50272797fe29f2",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/flopp/go-coordsparser",
+            "branch": "master",
+            "revision": "845bca739e263e1cd38de25024a47b4d6acbfc1f",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/fogleman/gg",
+            "branch": "master",
+            "revision": "6166aa3c1afaee416f384645a81636267aee6d25",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/gocarina/gocsv",
+            "branch": "master",
+            "revision": "aa69be31b2d52ae06bb468354003683a1d267453",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/golang/freetype",
+            "branch": "master",
+            "revision": "d9be45aaf7452cc30c0ceb1b1bf7efe1d17b7c87",
+            "packages": [
+                "raster",
+                "truetype"
+            ]
+        },
+        {
+            "name": "github.com/golang/geo",
+            "branch": "master",
+            "revision": "f819552e7195873dbc628554929703291cecbea0",
+            "packages": [
+                "r1",
+                "r2",
+                "r3",
+                "s1",
+                "s2"
+            ]
+        },
+        {
+            "name": "github.com/jung-kurt/gofpdf",
+            "branch": "master",
+            "revision": "6ac7d2caee89cdfdb4f6c273a88d1173d234c21b",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/skip2/go-qrcode",
+            "branch": "master",
+            "revision": "cf02323edc040f5263d08b45a60bc8abdc3bde18",
+            "packages": [
+                ".",
+                "bitset",
+                "reedsolomon"
+            ]
+        },
+        {
+            "name": "github.com/tkrajina/gpxgo",
+            "branch": "master",
+            "revision": "7848cf26f5a58b4a4e23b89a4b67cfc3d52dd042",
+            "packages": [
+                "gpx"
+            ]
+        },
+        {
+            "name": "golang.org/x/image",
+            "branch": "master",
+            "revision": "fb59e5ba1052c469714bd4e918e7d8360aaa9642",
+            "packages": [
+                "font",
+                "font/basicfont",
+                "font/plan9font",
+                "math/fixed"
+            ]
+        }
+    ]
+}

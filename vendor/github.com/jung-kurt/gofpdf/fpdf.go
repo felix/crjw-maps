@@ -127,6 +127,9 @@ func fpdfNew(orientationStr, unitStr, sizeStr, fontDirStr string, size SizeType)
 	f.stdPageSizes["a3"] = SizeType{841.89, 1190.55}
 	f.stdPageSizes["a4"] = SizeType{595.28, 841.89}
 	f.stdPageSizes["a5"] = SizeType{420.94, 595.28}
+	f.stdPageSizes["a6"] = SizeType{297.64, 420.94}
+	f.stdPageSizes["a2"] = SizeType{1190.55, 1683.78}
+	f.stdPageSizes["a1"] = SizeType{1683.78, 2383.94}
 	f.stdPageSizes["letter"] = SizeType{612, 792}
 	f.stdPageSizes["legal"] = SizeType{612, 1008}
 	if size.Wd > 0 && size.Ht > 0 {
@@ -2025,6 +2028,9 @@ func (f *Fpdf) SplitLines(txt []byte, w float64) [][]byte {
 // Text can be aligned, centered or justified. The cell block can be framed and
 // the background painted. See CellFormat() for more details.
 //
+// The current position after calling MultiCell() is the beginning of the next
+// line, equivalent to calling CellFormat with ln equal to 1.
+//
 // w is the width of the cells. A value of zero indicates cells that reach to
 // the right margin.
 //
@@ -2891,16 +2897,16 @@ func (f *Fpdf) parsepng(r io.Reader, readdpi bool) (info *ImageInfoType) {
 	return f.parsepngstream(buf, readdpi)
 }
 
-func (f *Fpdf) readBeInt32(buf *bytes.Buffer) (val int32) {
-	err := binary.Read(buf, binary.BigEndian, &val)
+func (f *Fpdf) readBeInt32(r io.Reader) (val int32) {
+	err := binary.Read(r, binary.BigEndian, &val)
 	if err != nil {
 		f.err = err
 	}
 	return
 }
 
-func (f *Fpdf) readByte(buf *bytes.Buffer) (val byte) {
-	err := binary.Read(buf, binary.BigEndian, &val)
+func (f *Fpdf) readByte(r io.Reader) (val byte) {
+	err := binary.Read(r, binary.BigEndian, &val)
 	if err != nil {
 		f.err = err
 	}
@@ -2962,12 +2968,12 @@ func (f *Fpdf) out(s string) {
 }
 
 // Add a buffered line to the document
-func (f *Fpdf) outbuf(b *bytes.Buffer) {
+func (f *Fpdf) outbuf(r io.Reader) {
 	if f.state == 2 {
-		f.pages[f.page].ReadFrom(b)
+		f.pages[f.page].ReadFrom(r)
 		f.pages[f.page].WriteString("\n")
 	} else {
-		f.buffer.ReadFrom(b)
+		f.buffer.ReadFrom(r)
 		f.buffer.WriteString("\n")
 	}
 }
@@ -2984,8 +2990,8 @@ func (f *Fpdf) RawWriteStr(str string) {
 // generation buffer. This is a low-level function that is not required for
 // normal PDF construction. An understanding of the PDF specification is needed
 // to use this method correctly.
-func (f *Fpdf) RawWriteBuf(buf *bytes.Buffer) {
-	f.outbuf(buf)
+func (f *Fpdf) RawWriteBuf(r io.Reader) {
+	f.outbuf(r)
 }
 
 // Add a formatted line to the document

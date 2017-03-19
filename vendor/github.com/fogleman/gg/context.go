@@ -44,26 +44,33 @@ const (
 	AlignRight
 )
 
+var (
+	defaultFillStyle   = NewSolidPattern(color.White)
+	defaultStrokeStyle = NewSolidPattern(color.Black)
+)
+
 type Context struct {
-	width      int
-	height     int
-	im         *image.RGBA
-	mask       *image.Alpha
-	color      color.Color
-	strokePath raster.Path
-	fillPath   raster.Path
-	start      Point
-	current    Point
-	hasCurrent bool
-	dashes     []float64
-	lineWidth  float64
-	lineCap    LineCap
-	lineJoin   LineJoin
-	fillRule   FillRule
-	fontFace   font.Face
-	fontHeight float64
-	matrix     Matrix
-	stack      []*Context
+	width         int
+	height        int
+	im            *image.RGBA
+	mask          *image.Alpha
+	color         color.Color
+	fillPattern   Pattern
+	strokePattern Pattern
+	strokePath    raster.Path
+	fillPath      raster.Path
+	start         Point
+	current       Point
+	hasCurrent    bool
+	dashes        []float64
+	lineWidth     float64
+	lineCap       LineCap
+	lineJoin      LineJoin
+	fillRule      FillRule
+	fontFace      font.Face
+	fontHeight    float64
+	matrix        Matrix
+	stack         []*Context
 }
 
 // NewContext creates a new image.RGBA with the specified width and height
@@ -82,15 +89,17 @@ func NewContextForImage(im image.Image) *Context {
 // No copy is made.
 func NewContextForRGBA(im *image.RGBA) *Context {
 	return &Context{
-		width:      im.Bounds().Size().X,
-		height:     im.Bounds().Size().Y,
-		im:         im,
-		color:      color.Transparent,
-		lineWidth:  1,
-		fillRule:   FillRuleWinding,
-		fontFace:   basicfont.Face7x13,
-		fontHeight: 13,
-		matrix:     Identity(),
+		width:         im.Bounds().Size().X,
+		height:        im.Bounds().Size().Y,
+		im:            im,
+		color:         color.Transparent,
+		fillPattern:   defaultFillStyle,
+		strokePattern: defaultStrokeStyle,
+		lineWidth:     1,
+		fillRule:      FillRuleWinding,
+		fontFace:      basicfont.Face7x13,
+		fontHeight:    13,
+		matrix:        Identity(),
 	}
 }
 
@@ -172,9 +181,29 @@ func (dc *Context) SetFillRuleEvenOdd() {
 
 // Color Setters
 
-// SetColor sets the current color.
-func (dc *Context) SetColor(c color.Color) {
+func (dc *Context) setFillAndStrokeColor(c color.Color) {
 	dc.color = c
+	dc.fillPattern = NewSolidPattern(c)
+	dc.strokePattern = NewSolidPattern(c)
+}
+
+// SetFillStyle sets current fill style
+func (dc *Context) SetFillStyle(pattern Pattern) {
+	// if pattern is SolidPattern, also change dc.color(for dc.Clear, dc.drawString)
+	if fillStyle, ok := pattern.(*solidPattern); ok {
+		dc.color = fillStyle.color
+	}
+	dc.fillPattern = pattern
+}
+
+// SetStrokeStyle sets current stroke style
+func (dc *Context) SetStrokeStyle(pattern Pattern) {
+	dc.strokePattern = pattern
+}
+
+// SetColor sets the current color(for both fill and stroke).
+func (dc *Context) SetColor(c color.Color) {
+	dc.setFillAndStrokeColor(c)
 }
 
 // SetHexColor sets the current color using a hex string. The leading pound
@@ -189,6 +218,7 @@ func (dc *Context) SetHexColor(x string) {
 // 255, inclusive.
 func (dc *Context) SetRGBA255(r, g, b, a int) {
 	dc.color = color.NRGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
+	dc.setFillAndStrokeColor(dc.color)
 }
 
 // SetRGB255 sets the current color. r, g, b values should be between 0 and 255,
@@ -206,6 +236,7 @@ func (dc *Context) SetRGBA(r, g, b, a float64) {
 		uint8(b * 255),
 		uint8(a * 255),
 	}
+	dc.setFillAndStrokeColor(dc.color)
 }
 
 // SetRGB sets the current color. r, g, b values should be between 0 and 1,
@@ -371,17 +402,8 @@ func (dc *Context) fill(painter raster.Painter) {
 // line cap, line join and dash settings. The path is preserved after this
 // operation.
 func (dc *Context) StrokePreserve() {
-	if dc.mask == nil {
-		painter := raster.NewRGBAPainter(dc.im)
-		painter.SetColor(dc.color)
-		dc.stroke(painter)
-	} else {
-		im := image.NewRGBA(image.Rect(0, 0, dc.width, dc.height))
-		painter := raster.NewRGBAPainter(im)
-		painter.SetColor(dc.color)
-		dc.stroke(painter)
-		draw.DrawMask(dc.im, dc.im.Bounds(), im, image.ZP, dc.mask, image.ZP, draw.Over)
-	}
+	painter := newPatternPainter(dc.im, dc.mask, dc.strokePattern)
+	dc.stroke(painter)
 }
 
 // Stroke strokes the current path with the current color, line width,
@@ -395,17 +417,8 @@ func (dc *Context) Stroke() {
 // FillPreserve fills the current path with the current color. Open subpaths
 // are implicity closed. The path is preserved after this operation.
 func (dc *Context) FillPreserve() {
-	if dc.mask == nil {
-		painter := raster.NewRGBAPainter(dc.im)
-		painter.SetColor(dc.color)
-		dc.fill(painter)
-	} else {
-		im := image.NewRGBA(image.Rect(0, 0, dc.width, dc.height))
-		painter := raster.NewRGBAPainter(im)
-		painter.SetColor(dc.color)
-		dc.fill(painter)
-		draw.DrawMask(dc.im, dc.im.Bounds(), im, image.ZP, dc.mask, image.ZP, draw.Over)
-	}
+	painter := newPatternPainter(dc.im, dc.mask, dc.fillPattern)
+	dc.fill(painter)
 }
 
 // Fill fills the current path with the current color. Open subpaths
@@ -450,6 +463,22 @@ func (dc *Context) ResetClip() {
 func (dc *Context) Clear() {
 	src := image.NewUniform(dc.color)
 	draw.Draw(dc.im, dc.im.Bounds(), src, image.ZP, draw.Src)
+}
+
+// SetPixel sets the color of the specified pixel using the current color.
+func (dc *Context) SetPixel(x, y int) {
+	dc.im.Set(x, y, dc.color)
+}
+
+// DrawPoint is like DrawCircle but ensures that a circle of the specified
+// size is drawn regardless of the current transformation matrix. The position
+// is still transformed, but not the shape of the point.
+func (dc *Context) DrawPoint(x, y, r float64) {
+	dc.Push()
+	tx, ty := dc.TransformPoint(x, y)
+	dc.Identity()
+	dc.DrawCircle(tx, ty, r)
+	dc.Pop()
 }
 
 func (dc *Context) DrawLine(x1, y1, x2, y2 float64) {
@@ -560,10 +589,11 @@ func (dc *Context) DrawImageAnchored(im image.Image, x, y int, ax, ay float64) {
 
 func (dc *Context) SetFontFace(fontFace font.Face) {
 	dc.fontFace = fontFace
+	dc.fontHeight = float64(fontFace.Metrics().Height) / 64
 }
 
 func (dc *Context) LoadFontFace(path string, points float64) error {
-	face, err := loadFontFace(path, points)
+	face, err := LoadFontFace(path, points)
 	if err == nil {
 		dc.fontFace = face
 		dc.fontHeight = points * 72 / 96

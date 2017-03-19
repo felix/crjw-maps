@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/flopp/go-staticmaps"
+	"github.com/felix/go-staticmaps"
 	"github.com/fogleman/gg"
 	"github.com/golang/geo/s2"
 	qrcode "github.com/skip2/go-qrcode"
@@ -60,22 +60,25 @@ func (l *Location) getMap() string {
 		}
 	}
 
-	if old {
+	if old || c.force {
 		if c.debug {
 			log.Printf("Creating new map file %s", path)
 		}
 		ctx := sm.NewContext()
-		// ctx.SetSize(640, 513)
-		ctx.SetSize(960, 770)
+		ctx.SetSize(640, 513)
+		// ctx.SetSize(960, 770)
 		pos := s2.LatLngFromDegrees(l.Latitude, l.Longitude)
 		kh := s2.LatLngFromDegrees(19.89830, 99.81805)
-		ctx.AddMarker(sm.NewMarker(pos, color.RGBA{0xff, 0, 0, 0xff}, 32.0))
-		ctx.AddMarker(sm.NewMarker(kh, color.RGBA{0, 0, 0xff, 0xff}, 32.0))
+		ctx.AddMarker(sm.NewMarker(pos, color.RGBA{0xff, 0, 0, 0xff}, 24.0))
+		ctx.AddMarker(sm.NewMarker(kh, color.RGBA{0, 0, 0xff, 0xff}, 24.0))
 		// ctx.SetCenter(s2.LatLngFromDegrees(19.89830, 99.81805))
 		// ctx.SetCenter(pos)
 		// ctx.SetTileProvider(sm.NewTileProviderOpenTopoMap())
 		// ctx.SetTileProvider(sm.NewTileProviderThunderforestOutdoors())
-		ctx.SetTileProvider(sm.NewTileProviderThunderforestLandscape())
+		// ctx.SetTileProvider(sm.NewTileProviderCartoLight())
+		// ctx.SetTileProvider(sm.NewTileProviderCartoDark())
+		ctx.SetTileProvider(sm.NewTileProviderWikimedia())
+		// ctx.SetTileProvider(sm.NewTileProviderOpenCycleMap())
 
 		if c.debug {
 			log.Printf("Rendering map for %s", l.Number)
